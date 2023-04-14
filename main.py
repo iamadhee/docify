@@ -50,7 +50,7 @@ class Docify:
                 yield from self.build_tree(path, prefix=prefix+extension)
 
     def get_tree(self):
-        tree_str = '\n'.join(self.build_tree(self.cur_path))
+        tree_str = "\n".join(self.build_tree(self.cur_path))
         return tree_str
     
     def get_file_list(self): 
@@ -76,5 +76,5 @@ class Docify:
         
 
 doc = Docify()
-doc.get_tree()
+doc.document()
 
