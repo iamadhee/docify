@@ -27,15 +27,31 @@ class Docify:
             reply=chat.choices[0].content
             self.messages.append({'role':'assistant','content':reply})
 
-    def get_tree(self,git_ignore=True):
-        try:
-            cmd = ['tree','-h']
-            tree=subprocess.check_output(cmd).decode('utf-8')
-        except:
-            cmd = "find . -not -path '*/\.*'"
-            tree=subprocess.check_output(cmd,shell=True).decode('utf-8')
-        print(tree)
-        return tree
+    def build_tree(self,dir_path,prefix: str=''):
+        """A recursive generator, given a directory Path object
+        will yield a visual tree structure line by line
+        with each line prefixed by the same characters
+        """    
+        space =  '    '
+        branch = '│   '
+        tee =    '├── '
+        last =   '└── '
+        contents =  list(filter(
+                            lambda path: not any((part for part in path.parts if part.startswith("."))), \
+                            dir_path.rglob("*")
+                           ))
+        # contents each get pointers that are ├── with a final └── :
+        pointers = [tee] * (len(contents) - 1) + [last]
+        for pointer, path in zip(pointers, contents):
+            yield prefix + pointer + path.name
+            if path.is_dir(): # extend the prefix and recurse:
+                extension = branch if pointer == tee else space 
+                # i.e. space because last, └── , above so no more |
+                yield from self.build_tree(path, prefix=prefix+extension)
+
+    def get_tree(self):
+        tree_str = '\n'.join(self.build_tree(self.cur_path))
+        return tree_str
     
     def get_file_list(self): 
         all_files = self.cur_path.rglob('*')
@@ -60,5 +76,5 @@ class Docify:
         
 
 doc = Docify()
-doc.document()
+doc.get_tree()
 
