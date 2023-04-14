@@ -5,7 +5,7 @@ from pathlib import Path
 class Docify:
 
     def __init__(self) -> None:
-        openai.api_key = "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"
+        openai.api_key = "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"
         self.model = 'gpt-3.5-turbo'
         self.messages = [{'role':'system', \
                           'content':'You are an AI specialized in Code. Do not answer anything other than code-related queries.'}, \
@@ -28,8 +28,13 @@ class Docify:
             self.messages.append({'role':'assistant','content':reply})
 
     def get_tree(self,git_ignore=True):
-        cmd = ['tree','-h']
-        tree=subprocess.check_output(cmd).decode('utf-8')
+        try:
+            cmd = ['tree','-h']
+            tree=subprocess.check_output(cmd).decode('utf-8')
+        except:
+            cmd = "find . -not -path '*/\.*'"
+            tree=subprocess.check_output(cmd,shell=True).decode('utf-8')
+        print(tree)
         return tree
     
     def get_file_list(self): 
