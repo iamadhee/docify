@@ -1,39 +1,54 @@
-# Docify
+<div align="center">
+<img width="200px" src="https://raw.githubusercontent.com/iamadhee/docify/dev/assets/logo.png">
+<h1>Docify</h1></div>
 
-Hate documenting your code repo? Well, that makes the two of us. Fear not! ChatGPT is here to save us. Docify is a command-line tool that generates documentation for your repository using ChatGPT. It uses OpenAI's GPT-3 model to provide a conversational experience and create a README.md file based on the content of files and the folder structure of your repository.
+<div align="center">
+Hate documenting your code? Fear not! ChatGPT powered Docify is here to save the day!
+</div>
+
+## What is Docify?
+
+Docify is a Python-based documentation tool that simplifies the documentation process for developers. It allows you to generate documentation for your codebase, including functions, classes, and modules. With Docify, you can easily create a comprehensive documentation website for your project. 
+
+----
+
+## Features
+
+- Automatic generation of documentation for your codebase
+
+----
+
+## How Docify Works
+
+Docify uses the OpenAI GPT-3 API to generate documentation for your codebase. It analyzes your code and generates a summary of each function, class, and module. It then uses natural language processing to generate a description of each item, including its purpose and usage. 
 
 ---
 
-# Usage
+## Getting Started
+Just copy the `documentor.py` and `config.yaml` files from the Docify's repository and paste it into the root folder of the repository you want to document. That's it! You are good to go. Everything else is already configured. 
 
-To use Docify, follow these steps:
+At your root folder just run, ```python3 documentor.py <API_KEY>```
 
-## Install Docify using pip:
+You need to have a OpenAI API key, to run docify. Don't have a key? Here's [how to get one](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/). Upon successful run of the said command, you'd have a file created named `docify_readme.md`. After careful review, paste the contents into your repository's README.md file. That's it, you are done with your documentation !
 
-`pip install docify`
-
-Run Docify at the root folder of your repository, providing your API key as an argument:
-
-`docify <API_KEY>`
-
-**Note**: Replace <API_KEY> with your actual OpenAI API key. Here's [how to generate one](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/).
-
-Docify will analyze the folder structure of your repository and the content of your files. It will have a conversational chat with the ChatGPT model, discussing the contents and structure of your repository.
-
-Finally, Docify will create a README.md file with the generated documentation. You can choose to write the documentation to README.md or docify.md by specifying the write flag. When set to True, Docify will write the generated documentation to README.md of the repository, and in the docify.md, if set to False. Default value for the write flag is False.
+If you feel adventurous, try fiddling a bit with the prompt and the models in the `config.yaml` file. You might get a better documentation.
 
 ----
 
-# Documentation
+## Contributing
 
-The documentation is generated based on the following steps:
-
-* Analyzing the folder structure: Docify generates a visual tree structure of your repository's folder hierarchy, displaying the directory names and file names, 
-
-* Analyzing file contents: Docify (ChatGPT) reads the content of each file in your repository and includes it in the documentation as code blocks.
-
-* Generating README.md: Docify creates a README.md file with the generated documentation, summarizing the contents and structure of your repository, with context we gave to the model.
+We welcome contributions to the Docify project. If you find a bug or have a feature request, please submit an issue on GitHub. If you would like to contribute code to the project, please submit a pull request. Your suggestions are always welcome !
 
 ----
 
-:wink: _This **README.md** was created with Docify_ 
+## License
+
+Docify is licensed under the MIT License. See the `LICENSE` file for more information.
+
+----
+
+## Conclusion
+
+We hope you find Docify to be a useful tool for documenting your code. With its intuitive interface and powerful features
+
+:wink: _This **README.md** was created with [Docify](https://github.com/iamadhee/docify) (Didn't change a thing! Well.. Except pasting the logo)_
