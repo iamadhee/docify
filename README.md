@@ -18,35 +18,26 @@ Docify is a Python-based documentation tool that simplifies the documentation pr
 
 ----
 
-## Getting Started
-
-To start using Docify, simply clone the repository and follow the installation instructions. Once installed, you can generate documentation for your project using the `docify` command.
-
-### Folder Structure of the Repository
-
-The repository contains the following files:
-
-- `LICENSE`: The MIT License for the project
-- `documentor.py`: The main Python script for the project
-- `config.yaml`: The configuration file for the project
-
-### Content of the Repository
-
-The `documentor.py` file contains the main logic for the project. It imports several Python modules, including `json`, `yaml`, and `pathlib`. It also imports the `GPTSimpleVectorIndex` and `GPTTreeIndex` classes from the `gpt_index` module, as well as the `ChatOpenAI` class from the `langchain.chat_models` module. 
-
-The `config.yaml` file contains the configuration settings for the project, including the API key for the OpenAI GPT-3 API. 
-
-----
-
 ## How Docify Works
 
 Docify uses the OpenAI GPT-3 API to generate documentation for your codebase. It analyzes your code and generates a summary of each function, class, and module. It then uses natural language processing to generate a description of each item, including its purpose and usage. 
+
+---
+
+## Getting Started
+Just copy the `documentor.py` and `config.yaml` files from the Docify's repository and paste it into the root folder of the repository you want to document. That's it! You are good to go. Everything else is already configured. 
+
+At your root folder just run, ```python3 documentor.py <API_KEY>```
+
+You need to have a OpenAI API key, to run docify. Don't have a key? Here's [how to get one](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/). Upon successful run of the said command, you'd have a file created named `docify_readme.md`. After careful review, paste the contents into your repository's README.md file. That's it, you are done with your documentation !
+
+If you feel adventurous, try fiddling a bit with the prompt and the models in the `config.yaml` file. You might get a better documentation.
 
 ----
 
 ## Contributing
 
-We welcome contributions to the Docify project. If you find a bug or have a feature request, please submit an issue on GitHub. If you would like to contribute code to the project, please submit a pull request. 
+We welcome contributions to the Docify project. If you find a bug or have a feature request, please submit an issue on GitHub. If you would like to contribute code to the project, please submit a pull request. Your suggestions are always welcome !
 
 ----
 
@@ -60,4 +51,4 @@ Docify is licensed under the MIT License. See the `LICENSE` file for more inform
 
 We hope you find Docify to be a useful tool for documenting your code. With its intuitive interface and powerful features
 
-:wink: _This **README.md** was created with [Docify](https://github.com/iamadhee/docify) (Didn't change a thing!)_
+:wink: _This **README.md** was created with [Docify](https://github.com/iamadhee/docify) (Didn't change a thing! Well.. Except pasting the logo)_
