@@ -1,5 +1,5 @@
 <div align="center">
-<img width="200px" src="https://raw.githubusercontent.com/iamadhee/docify/dev/assets/logo.png">
+<img width="200px" src="https://raw.githubusercontent.com/iamadhee/docify/main/assets/logo.png">
 <h1>Docify</h1></div>
 
 <div align="center">
