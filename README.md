@@ -1,18 +1,22 @@
-# Docify: Your Personal Documentation Assistant
+<div align="center">
+<img width="200px" src="https://raw.githubusercontent.com/iamadhee/docify/dev/assets/logo.png">
+<h1>Docify</h1></div>
 
-Welcome to Docify, a powerful tool that helps you document your code with ease. With Docify, you can generate comprehensive documentation for your project in a matter of minutes. 
+<div align="center">
+Hate documenting your code? Fear not! ChatGPT powered Docify is here to save the day!
+</div>
 
 ## What is Docify?
 
 Docify is a Python-based documentation tool that simplifies the documentation process for developers. It allows you to generate documentation for your codebase, including functions, classes, and modules. With Docify, you can easily create a comprehensive documentation website for your project. 
 
+----
+
 ## Features
 
-- Intuitive command-line interface
-- Support for multiple documentation formats, including HTML and Markdown
 - Automatic generation of documentation for your codebase
-- Support for custom templates
-- Easily customizable
+
+----
 
 ## Getting Started
 
@@ -32,17 +36,25 @@ The `documentor.py` file contains the main logic for the project. It imports sev
 
 The `config.yaml` file contains the configuration settings for the project, including the API key for the OpenAI GPT-3 API. 
 
+----
+
 ## How Docify Works
 
 Docify uses the OpenAI GPT-3 API to generate documentation for your codebase. It analyzes your code and generates a summary of each function, class, and module. It then uses natural language processing to generate a description of each item, including its purpose and usage. 
+
+----
 
 ## Contributing
 
 We welcome contributions to the Docify project. If you find a bug or have a feature request, please submit an issue on GitHub. If you would like to contribute code to the project, please submit a pull request. 
 
+----
+
 ## License
 
 Docify is licensed under the MIT License. See the `LICENSE` file for more information.
+
+----
 
 ## Conclusion
 
