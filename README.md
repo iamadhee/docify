@@ -25,13 +25,19 @@ Docify uses the OpenAI GPT-3 API to generate documentation for your codebase. It
 ---
 
 ## Getting Started
-Just copy the `documentor.py` and `config.yaml` files from the Docify's repository and paste it into the root folder of the repository you want to document. That's it! You are good to go. Everything else is already configured. 
+Just copy the `documentor.py`, `requirements.txt` and `config.yaml` files from the Docify's repository and paste it into the root folder of the repository you want to document. That's it! You are good to go. Everything else is already configured. 
 
-At your root folder just run, ```python3 documentor.py <API_KEY>```
+Run ```pip3 install -r requirements.txt``` to install all the dependencies.
+
+After that, at your root folder just run, ```python3 documentor.py <API_KEY>```
 
 You need to have a OpenAI API key, to run docify. Don't have a key? Here's [how to get one](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/). Upon successful run of the said command, you'd have a file created named `docify_readme.md`. After careful review, paste the contents into your repository's README.md file. That's it, you are done with your documentation !
 
 If you feel adventurous, try fiddling a bit with the prompt and the models in the `config.yaml` file. You might get a better documentation.
+
+> **Warning**
+>
+> This tool shares the contents (codes) in your repository to make GPT-3 understand your repository. Please exercise caution while using the tool.
 
 ----
 
