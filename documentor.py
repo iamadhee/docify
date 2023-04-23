@@ -6,7 +6,7 @@ from langchain.llms.base import LLM
 from models.openai_complete import OpenAI
 from langchain.embeddings.openai import OpenAIEmbeddings
 from tqdm import tqdm
-
+import time
 
 with open('config.yaml','r') as f:
     config = yaml.safe_load(f)
@@ -58,12 +58,11 @@ class ReadmeGen:
 
         return service_context
 
-    
     def build_summary_dict(self):
         files = self.get_file_list(self.cur_path,return_only_files=True)
         summary_dict = dict()
 
-        for file in tqdm(files):
+        for count, file in enumerate(tqdm(files),1):
             try:
                 with open(file,'r') as f:
                     contents = f.read()
@@ -73,24 +72,28 @@ class ReadmeGen:
             if len(contents) < 10:
                 continue
 
-            prompt = "Summarize what the below code does: \n ```"+contents+"\n```"
+            prompt = "Summarize what the below code does very briefly: \n ```"+contents+"\n```"
 
             response = self.chatbot(prompt)
             summary_dict[str(file)] = response
+
+            if count%3==0:
+                time.sleep(60)
 
         return summary_dict
 
     def build_index(self, save=False):
         service_context = self.build_context()
+        ##### Dev Mode
         tree = self.get_tree()
         sum_dict = self.build_summary_dict()
-        # dir_dict = self.directory_to_dict(self.cur_path)
         repo_dict = dict()
         repo_dict['folder structure'] = tree
         repo_dict['summary of files'] = sum_dict
         repo_json = json.dumps(repo_dict)
         with open('indices/readme_index.json', 'w') as f:
             f.write(repo_json)
+        #####
 
         documents = JSONReader().load_data('indices/readme_index.json')
 
@@ -167,7 +170,7 @@ class ReadmeGen:
 
 
     def document(self):
-        index = self.build_index()
+        index = self.build_index(save=True)
         with open('templates/readme/1.j2','r') as f:
             temp = f.read()
         prompt = self.prompt+"```\n"+temp+"\n```"
@@ -187,6 +190,6 @@ class ReadmeGen:
 if __name__=='__main__':
     import sys
     API_KEY = sys.argv[1]
-    model_llm = OpenAI(api_key=API_KEY, model='gpt-3.5-turbo')
+    model_llm = OpenAI(api_key=API_KEY, model=config['MODEL'], temperature=.3)
     docuter = ReadmeGen()
-    docuter.debug()
+    docuter.document()

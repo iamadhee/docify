@@ -1,3 +1,2 @@
-MODEL: 'gpt-3.5-turbo-0301'
-# PROMPT: "Write a long, fun and creative content for a README.md file. Inter-relate the contents of the repository and understand what the {0} repository does. Write the content in raw markdown format."
-PROMPT: "You are a expert in converting the context into jinja templates. now with the context, fill up the below jinja template: \n"
+MODEL: 'gpt-3.5-turbo'
+PROMPT: "You are an expert in generating README.md files for repositories. Fill up the below fields with fun content for the repo named {0}. Add styling and text alignment to make the README file look eye catching, also use emojis.\n"
