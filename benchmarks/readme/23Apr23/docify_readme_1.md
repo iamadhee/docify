@@ -1,6 +1,3 @@
-Sure! Here's an example README.md file for a repository called "Docify":
-
-```
 # Docify
 
 ## What is Docify?
@@ -35,8 +32,6 @@ Docify is released under the MIT License. See [LICENSE](./LICENSE) for more info
 
 ## Conclusion
 
-We hope that Docify will help you create high-quality README files for your GitHub repositories. If you have any questions or feedback, please feel free to submit an issue or reach out to us on Twitter. Thanks for using Docify!```
-
-Please note that this is just an example README.md file and can be customized further based on the specific needs of the repository.
+We hope that Docify will help you create high-quality README files for your GitHub repositories. If you have any questions or feedback, please feel free to submit an issue or reach out to us on Twitter. Thanks for using Docify!
 
 :wink: _This **README.md** was created with [Docify](https://github.com/iamadhee/docify)_
