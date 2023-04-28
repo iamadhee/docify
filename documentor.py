@@ -4,7 +4,6 @@ import yaml
 from llama_index import LLMPredictor, ServiceContext, GPTSimpleVectorIndex, SimpleDirectoryReader, PromptHelper, JSONReader, GPTTreeIndex, LangchainEmbedding
 from langchain.llms.base import LLM
 from models.openai_complete import OpenAI
-from langchain.embeddings.openai import OpenAIEmbeddings
 from tqdm import tqdm
 import time
 
@@ -61,8 +60,9 @@ class ReadmeGen:
     def build_summary_dict(self):
         files = self.get_file_list(self.cur_path,return_only_files=True)
         summary_dict = dict()
-
-        for count, file in enumerate(tqdm(files),1):
+        
+        count=1
+        for file in tqdm(files):
             try:
                 with open(file,'r') as f:
                     contents = f.read()
@@ -72,27 +72,30 @@ class ReadmeGen:
             if len(contents) < 10:
                 continue
 
-            prompt = "Summarize what the below code does very briefly: \n ```"+contents+"\n```"
+            file_name = str(file)
+
+            prompt = f"Summarize what the below code in {file_name} file does very briefly: \n ```\n{contents}\n```"
 
             response = self.chatbot(prompt)
-            summary_dict[str(file)] = response
+            summary_dict[file_name] = response
 
             if count%3==0:
                 time.sleep(60)
+            count+=1
 
         return summary_dict
 
     def build_index(self, save=False):
         service_context = self.build_context()
         ##### Dev Mode
-        tree = self.get_tree()
-        sum_dict = self.build_summary_dict()
-        repo_dict = dict()
-        repo_dict['folder structure'] = tree
-        repo_dict['summary of files'] = sum_dict
-        repo_json = json.dumps(repo_dict)
-        with open('indices/readme_index.json', 'w') as f:
-            f.write(repo_json)
+        # tree = self.get_tree()
+        # sum_dict = self.build_summary_dict()
+        # repo_dict = dict()
+        # repo_dict['folder structure'] = tree
+        # repo_dict['summary of files'] = sum_dict
+        # repo_json = json.dumps(repo_dict)
+        # with open('indices/readme_index.json', 'w') as f:
+        #     f.write(repo_json)
         #####
 
         documents = JSONReader().load_data('indices/readme_index.json')
@@ -192,4 +195,4 @@ if __name__=='__main__':
     API_KEY = sys.argv[1]
     model_llm = OpenAI(api_key=API_KEY, model=config['MODEL'], temperature=.3)
     docuter = ReadmeGen()
-    docuter.document()
+    docuter.debug()
