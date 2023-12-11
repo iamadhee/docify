@@ -1,50 +1,109 @@
 import json
 from pathlib import Path
 import yaml
-from gpt_index import (GPTSimpleVectorIndex, GPTTreeIndex, JSONReader,
-                       LLMPredictor, PromptHelper, SimpleDirectoryReader)
-from langchain.chat_models import ChatOpenAI
-import os
+from llama_index import LLMPredictor, ServiceContext, GPTSimpleVectorIndex, SimpleDirectoryReader, PromptHelper, JSONReader, GPTTreeIndex, LangchainEmbedding
+from langchain.llms.base import LLM
+from models.openai_complete import OpenAI
+from langchain.embeddings.openai import OpenAIEmbeddings
+from tqdm import tqdm
+import time
 
-class Docify:
+with open('config.yaml','r') as f:
+    config = yaml.safe_load(f)
+
+class DocLLM(LLM):
+    model_name = config['MODEL']
+
+    @property
+    def _llm_type(self) -> str:
+        return "custom"
+
+    def _call(self, prompt: str, stop: str = None):
+        if stop is not None:
+            raise ValueError("stop kwargs are not permitted.")
+        chatbot = model_llm
+        res = chatbot.run(prompt)
+        return res
+
+    @property
+    def _identifying_params(self):
+        return {"name_of_model": self.model_name}
+
+
+class ReadmeGen:
 
     def __init__(self):
-        os.environ["OPENAI_API_KEY"] = API_KEY
+
         self.cur_path = Path()
+        self.prompt = config['PROMPT'].format([self.cur_path.cwd().name.title()])
+        self.model = DocLLM()
 
-        with open('config.yaml', 'r') as f:
-            conf = yaml.safe_load(f)
+    def contextbot(self, index, input_text):
+        response = index.query(
+            input_text, response_mode="compact", service_context=self.build_context())
+        return response.response
 
-        self.prompt = conf['PROMPT'].format([self.cur_path.cwd().name.title()])
-        self.model = conf['MODEL']
+    def chatbot(self, input_text):
+        response = self.model(input_text)
+        return response
 
-    def build_prompt_helper(self, max_input_size=4096, num_outputs=512, max_chunk_overlap=20, chunk_size_limit=600):
+    def build_context(self, max_input_size = 4096, num_outputs = 512,  max_chunk_overlap = 20, chunk_size_limit = 600):
         prompt_helper = PromptHelper(
             max_input_size, num_outputs, max_chunk_overlap, chunk_size_limit=chunk_size_limit)
-        return prompt_helper
 
-    def build_llm_predictor(self, llm):
-        llm_predictor = LLMPredictor(llm=llm)
-        return llm_predictor
+        llm_predictor = LLMPredictor(llm=self.model)
 
-    def load_data_from_path(self, directory_path):
-        documents = SimpleDirectoryReader(
-            directory_path, recursive=True).load_data()
-        return documents
+        service_context = ServiceContext.from_defaults(
+            llm_predictor=llm_predictor, prompt_helper=prompt_helper) 
 
-    def construct_vector_index(self, documents, llm_predictor, prompt_helper):
-        index = GPTSimpleVectorIndex(
-            documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
+        return service_context
+
+    def build_summary_dict(self):
+        files = self.get_file_list(self.cur_path,return_only_files=True)
+        summary_dict = dict()
+
+        for count, file in enumerate(tqdm(files),1):
+            try:
+                with open(file,'r') as f:
+                    contents = f.read()
+            except:
+                continue
+
+            if len(contents) < 10:
+                continue
+
+            prompt = "Summarize what the below code does very briefly: \n ```"+contents+"\n```"
+
+            response = self.chatbot(prompt)
+            summary_dict[str(file)] = response
+
+            if count%3==0:
+                time.sleep(60)
+
+        return summary_dict
+
+    def build_index(self, save=False):
+        service_context = self.build_context()
+        ##### Dev Mode
+        tree = self.get_tree()
+        sum_dict = self.build_summary_dict()
+        repo_dict = dict()
+        repo_dict['folder structure'] = tree
+        repo_dict['summary of files'] = sum_dict
+        repo_json = json.dumps(repo_dict)
+        with open('indices/readme_index.json', 'w') as f:
+            f.write(repo_json)
+        #####
+
+        documents = JSONReader().load_data('indices/readme_index.json')
+
+        index = GPTSimpleVectorIndex.from_documents(
+            documents, service_context=service_context)
+
+        if not save:
+            Path('indices/readme_index.json').unlink()
+
         return index
-
-    def construct_tree_index(self, documents, llm_predictor, prompt_helper):
-        index = GPTTreeIndex(
-            documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-        return index
-
-    def chatbot(self, index, input_text):
-        response = index.query(input_text)  # response_mode='tree_summarize'
-        return response.response
 
     def get_file_list(self, path, return_only_files: bool = False) -> list:
         files = list(filter(
@@ -106,43 +165,31 @@ class Docify:
         repo_dict['folder structure of the repository'] = tree
         repo_dict['content of the the repository'] = dir_dict
         repo_json = json.dumps(repo_dict)
-        with open('docify_index.json', 'w') as f:
+        with open('indices/readme_index.json', 'w') as f:
             f.write(repo_json)
 
-    def load_data_from_json(self):
-        self.create_index_json()
-        documents = JSONReader().load_data('docify_index.json')
-        Path('docify_index.json').unlink()
-        return documents
-
-    def build_index(self):
-        prompt_helper = self.build_prompt_helper()
-
-        llm_predictor = self.build_llm_predictor(ChatOpenAI(
-            temperature=0.7, model_name=self.model, max_tokens=512))
-        documents = self.load_data_from_json()
-        index = self.construct_vector_index(
-            documents=documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-        # index = self.construct_tree_index(documents=documents, llm_predictor=llm_predictor, prompt_helper=prompt_helper)
-        return index
 
     def document(self):
-        index = self.build_index()
-        response = self.chatbot(index=index, input_text=self.prompt)
+        index = self.build_index(save=True)
+        with open('templates/readme/1.j2','r') as f:
+            temp = f.read()
+        prompt = self.prompt+"```\n"+temp+"\n```"
+        response = self.contextbot(index=index, input_text=prompt)
         response+="\n\n:wink: _This **README.md** was created with [Docify](https://github.com/iamadhee/docify)_"
 
         with open('docify_readme.md', 'w') as f:
             f.write(response)
 
     def debug(self):
-        index = self.build_index()
+        index = self.build_index(save=True)
         while True:
             pt = input('ask: ')
-            print(self.chatbot(index=index, input_text=pt))
+            print(self.contextbot(index=index, input_text=pt))
 
 
 if __name__=='__main__':
     import sys
     API_KEY = sys.argv[1]
-    docuter = Docify()
+    model_llm = OpenAI(api_key=API_KEY, model=config['MODEL'], temperature=.3)
+    docuter = ReadmeGen()
     docuter.document()
